@@ -21,7 +21,7 @@
 
     <div class = "choose">
        <div class = "profile">
-        <div onclick = "selectPlayer('X');" id = "playerX"><img id ="detective-1-img" width = "200" height = "200" src="images/noir.png"></div>
+        <div onclick = "selectPlayer('X');" id = "playerX"><img id ="detective-1-img" width = "200" height = "200" src="noir.png"></div>
         <p id = "detective-1">Detective X: Professional sleuth and stealthy Tic-Tac-Toe player</p>
       </div>
     <div class = "board">
@@ -65,7 +65,7 @@
 
 
    <div class = "profile">
-      <div id = "playerO" onclick = "selectPlayer('O')"><img id = "detective-2-img" width = "200" height = "200" src = "images/noir2.png"></div>
+      <div id = "playerO" onclick = "selectPlayer('O')"><img id = "detective-2-img" width = "200" height = "200" src = "noir2.png"></div>
       <p id = "detective-2">The Investigat-O: Private Investigator and Tic-Tac-Toe champion</p>
    </div>
   </div>
@@ -84,11 +84,11 @@ var cpuChoice, playerType, selected;
 var trackBoard = [["", "", ""],["", "", ""], ["", "", ""]];
 
 //Audio
-var sound1 = new Audio("sounds/end.wav");
-var click = new Audio("sounds/click.wav");
-var sound = new Audio("sounds/chalk.wav");
-var music = new Audio("sounds/song.mp3");
-var whoosh = new Audio("sounds/whoosh.wav");
+var sound1 = new Audio("end.wav");
+var click = new Audio("click.wav");
+var sound = new Audio("chalk.wav");
+var music = new Audio("song.mp3");
+var whoosh = new Audio("whoosh.wav");
 music.volume = 0.2;
 sound1.volume = 0.4;
 
@@ -506,7 +506,7 @@ function selectPlayer(val)
       document.getElementById("heading").innerHTML = "<span style='color: #e0cf0b;'>YOU ARE 'X'</span>";
       document.getElementById("detective-1").style.visibility = "visible";
       dialogue(1);
-      document.body.style.backgroundImage ="url('images/wallpaper1.png')";
+      document.body.style.backgroundImage ="url('wallpaper1.png')";
       document.body.style.backgroundSize = "cover";
       playerType = 1;
     }
@@ -517,7 +517,7 @@ function selectPlayer(val)
       document.getElementById("heading").innerHTML = "<span style='color: #05ab18;'>YOU ARE 'O'</span>";
       document.getElementById("detective-2").style.visibility = "visible";
       dialogue(0);
-      document.body.style.backgroundImage ="url('images/wallpaper2.jpg')";
+      document.body.style.backgroundImage ="url('wallpaper2.jpg')";
       document.body.style.backgroundSize = "cover";
       playerType = 0;
     }
