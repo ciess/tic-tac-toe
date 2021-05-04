@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Syne+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <title>TIC TAC TOE: NOIR</title>
+  </head>
+
+
+
+  <body id = "body">
+    <div class = "container">
+     <div class = "text">
+    <h1 id = "heading">CHOOSE YOUR PLAYER</h1>
+    <div class = "options">
+      <p id = "restart" onclick = "location.reload();">NEW PLAYER</p>
+      <p id = "clear" onclick = "clearBoard();">CLEAR BOARD</p>
+    </div>
+   </div>
+
+    <div class = "choose">
+       <div class = "profile">
+        <div onclick = "selectPlayer('X');" id = "playerX"><img id ="detective-1-img" width = "200" height = "200" src="images/noir.png"></div>
+        <p id = "detective-1">Detective X: Professional sleuth and stealthy Tic-Tac-Toe player</p>
+      </div>
+    <div class = "board">
+
+    <!-- ONLY VISIBLE WHEN USER FINISHES GAME -->
+    <div class = "folder" id = "endgame1" onclick = "hide(this);">
+      <div id = "block"></div>
+      <div id = "exitX">X</div>
+      <h1>CASE CLOSED</h1><p style = "color:#000000; font-size:15px;">YOU LOST. CLICK TO EXIT.</p>
+    </div>
+    <div class = "folder" id = "endgame2" onclick = "hide(this);">
+      <div id = "block"></div>
+      <div id = "exitX">X</div>
+      <h1>CASE SOLVED</h1><p style = "color:#000000; font-size:15px;">YOU WON! CLICK TO EXIT.</p>
+    </div>
+     <div class = "folder" id = "endgame3" onclick = "hide(this);">
+      <div id = "block"></div>
+      <div id = "exitX">X</div>
+      <h1>INCONCLUSIVE</h1><p style = "color:#000000; font-size:15px;">NO WINNER. CLICK TO EXIT.</p>
+    </div>
+    <!-- ----------------------------------------- -->
+
+    <table id = "gameBoard">
+      <tr>
+        <td id = "cell11" onclick="updateBoard(this);"></td>
+        <td id = "cell12" onclick = "updateBoard(this);"></td>
+        <td id = "cell13" onclick = "updateBoard(this);"></td>
+      </tr>
+      <tr>
+        <td id = "cell21" onclick = "updateBoard(this);"></td>
+        <td id = "cell22" onclick = "updateBoard(this);"></td>
+        <td id = "cell23" onclick = "updateBoard(this);"></td>
+      </tr>
+      <tr>
+        <td id = "cell31" onclick = "updateBoard(this);"></td>
+        <td id = "cell32" onclick = "updateBoard(this);"></td>
+        <td id = "cell33" onclick = "updateBoard(this);"></td>
+      </tr>
+    </table>
+   </div>
+
+
+   <div class = "profile">
+      <div id = "playerO" onclick = "selectPlayer('O')"><img id = "detective-2-img" width = "200" height = "200" src = "images/noir2.png"></div>
+      <p id = "detective-2">The Investigat-O: Private Investigator and Tic-Tac-Toe champion</p>
+   </div>
+  </div>
+  </div>
+  </body>
+  <script>
+
+//Total moves made throughout game
+var moves =0;
+
+//cpuChoice = Cell grid selected by other player, playerType = Player 1 or 2, selected = Determines if user already selected player
+var cpuChoice, playerType, selected;
+
+
+//Tic-Tac-Toe board array
+var trackBoard = [["", "", ""],["", "", ""], ["", "", ""]];
+
+//Audio
+var sound1 = new Audio("sounds/end.wav");
+var click = new Audio("sounds/click.wav");
+var sound = new Audio("sounds/chalk.wav");
+var music = new Audio("sounds/song.mp3");
+var whoosh = new Audio("sounds/whoosh.wav");
+music.volume = 0.2;
+sound1.volume = 0.4;
+
+//Condition for winning (initialized at 0)
+var win = 0;
+
+//Determines if match has concluded
+var gameFinished = 0;
+
+//--------------GAME FUNCTIONS-------------------------------------------
+
+//Resets game board
+function clearBoard()
+{
+  whoosh.play();
+  if(win == 1)
+  {
+     if(playerType == 1)
+     {
+        dialogue(1);
+     }
+     else if(playerType ==0)
+     {
+        dialogue(0);
+     }
+  }
+
+  let getCell;
+  win = 0;
+  moves  = 0;
+  gameFinished = 0;
+  trackBoard = [["", "", ""],["", "", ""], ["", "", ""]];
+  for(let i = 1; i <=3; i++)
+  {
+    for(let j=1; j<=3; j++)
+    {
+      getCell = "cell" + i + j;
+      document.getElementById(getCell).innerHTML = "";
+      document.getElementById(getCell).style.backgroundColor = "";
+      document.getElementById(getCell).disabled = false;
+    }
+  }
+}
+
+
+//Display if other player wins
+function cpuWins()
+{
+  gameFinished =1;
+  setTimeout(function() {document.getElementById("endgame1").style.visibility = "visible"; sound1.play();}, 600);
+  if(playerType == 1) //If user is Player 1
+  {
+    document.getElementById("detective-1").innerHTML = "Detective X: Let's forget this happened..";
+    document.getElementById("detective-2").innerHTML = "<span style ='color:green;''>The Investigat-O: Champion once again!</span>";
+  }
+  else if(playerType == 0) //If user is Player 2
+  {
+    document.getElementById("detective-1").innerHTML = "<span style ='color:green;''>Detective X: VICTORY!</span>";
+    document.getElementById("detective-2").innerHTML = " The Investigat-O: I'll get it next time...";
+  }
+}
+
+//Display if user wins
+function userWins()
+{
+ gameFinished =1;
+ setTimeout(function() {document.getElementById("endgame2").style.visibility = "visible"; sound1.play();}, 600);
+
+ if(playerType == 1) //If user is Player 1
+ {
+  document.getElementById("detective-1").innerHTML = "<span style ='color:green;''>Detective X: Winner! Just as expected.</span>";
+  document.getElementById("detective-2").innerHTML = "The Investigat-O: ...";
+}
+else if(playerType == 0) //If user is Player 2
+{
+  document.getElementById("detective-1").innerHTML = "Detective X: You won't win next time..";
+  document.getElementById("detective-2").innerHTML = " <span style ='color:green;''>The Investigat-O: Win! </span>";
+}
+}
+
+
+//Evaluates all winning conditions
+function checkWin()
+{
+  //Row 1 win
+  // [X][X][X]
+  // [][][]
+  // [][][]
+  if(trackBoard[0][0] != "" && trackBoard[0][0] == trackBoard[0][1] && trackBoard[0][1] == trackBoard[0][2])
+  {
+    setTimeout(function()  {document.getElementById("cell11").style.backgroundColor = "#453f3f";
+      document.getElementById("cell12").style.backgroundColor = "#453f3f";
+      document.getElementById("cell13").style.backgroundColor = "#453f3f";}, 400);
+
+    if(trackBoard[0][0] == 10)
+    {
+      cpuWins();
+      return 1;
+    }
+    else if(trackBoard[0][0] == 1)
+    {
+      userWins();
+      return 1;
+    }
+  }
+
+  //Row 2 win
+  // [][][]
+  // [X][X][X]
+  // [][][]
+  else if(trackBoard[1][0] != "" && trackBoard[1][0] == trackBoard[1][1] && trackBoard[1][1] == trackBoard[1][2])
+  {
+    setTimeout(function()  {document.getElementById("cell21").style.backgroundColor = "#453f3f";
+      document.getElementById("cell22").style.backgroundColor = "#453f3f";
+      document.getElementById("cell23").style.backgroundColor = "#453f3f";}, 400);
+    if(trackBoard[1][0] == 10)
+    {
+      cpuWins();
+      return 1;
+    }
+    else if(trackBoard[1][0] && trackBoard[1][1] && trackBoard[1][2] == 1)
+    {
+      userWins();
+      return 1;
+    }
+  }
+
+  //Row 3 win
+  // [][][]
+  // [][][]
+  // [X][X][X]
+  else if(trackBoard[2][0] != "" && trackBoard[2][0] == trackBoard[2][1] && trackBoard[2][1] == trackBoard[2][2])
+  {
+   setTimeout(function()  {document.getElementById("cell31").style.backgroundColor = "#453f3f";
+    document.getElementById("cell32").style.backgroundColor = "#453f3f";
+    document.getElementById("cell33").style.backgroundColor = "#453f3f";}, 400);
+   if(trackBoard[2][0] == 10)
+   {
+    cpuWins();
+    return 1;
+  }
+  else if(trackBoard[2][0] && trackBoard[2][1] && trackBoard[2][2] == 1)
+  {
+    userWins();
+    return 1;
+  }
+}
+
+//Left-to-Right Diagonal win
+// [X][][]
+// [][X][]
+// [][][X]
+else if(trackBoard[0][0] != "" && trackBoard[0][0] == trackBoard[1][1] && trackBoard[1][1] == trackBoard[2][2])
+{
+  setTimeout(function()  {document.getElementById("cell11").style.backgroundColor = "#453f3f";
+    document.getElementById("cell22").style.backgroundColor = "#453f3f";
+    document.getElementById("cell33").style.backgroundColor = "#453f3f";}, 400);
+  if(trackBoard[0][0] && trackBoard[1][1] && trackBoard[2][2] == 10)
+  {
+    cpuWins();
+    return 1;
+  }
+  else if(trackBoard[0][0] && trackBoard[1][1] && trackBoard[2][2] == 1)
+  {
+    userWins();
+    return 1;
+  }
+}
+
+//Right-to-Left Diagonal win
+// [][][X]
+// [][X][]
+// [X][][]
+else if(trackBoard[0][2] != "" && trackBoard[0][2] == trackBoard[1][1] && trackBoard[1][1] == trackBoard[2][0])
+{
+
+ setTimeout(function()  {document.getElementById("cell13").style.backgroundColor = "#453f3f";
+  document.getElementById("cell22").style.backgroundColor = "#453f3f";
+  document.getElementById("cell31").style.backgroundColor = "#453f3f";}, 400);
+ if(trackBoard[0][2] && trackBoard[1][1] && trackBoard[2][0] == 10)
+ {
+  cpuWins();
+  return 1;
+}
+else if(trackBoard[0][2] && trackBoard[1][1] && trackBoard[2][0] == 1)
+{
+  userWins();
+  return 1;
+}
+}
+
+//Column 1 win
+// [X][][]
+// [X][][]
+// [X][][]
+else if(trackBoard[0][0] != "" && trackBoard[0][0] == trackBoard[1][0] && trackBoard[1][0] == trackBoard[2][0])
+{
+  setTimeout(function()  {document.getElementById("cell11").style.backgroundColor = "#453f3f";
+    document.getElementById("cell21").style.backgroundColor = "#453f3f";
+    document.getElementById("cell31").style.backgroundColor = "#453f3f";}, 400);
+
+  if(trackBoard[0][2] && trackBoard[1][1] && trackBoard[2][0] == 10)
+  {
+    cpuWins();
+    return 1;
+  }
+  else if(trackBoard[0][2] && trackBoard[1][1] && trackBoard[2][0] == 1)
+  {
+    userWins();
+    return 1;
+  }
+}
+
+//Column 2 win
+// [][X][]
+// [][X][]
+// [][X][]
+else if(trackBoard[0][1] != "" && trackBoard[0][1] == trackBoard[1][1] && trackBoard[1][1] == trackBoard[2][1])
+{
+ setTimeout(function()  {document.getElementById("cell12").style.backgroundColor = "#453f3f";
+  document.getElementById("cell22").style.backgroundColor = "#453f3f";
+  document.getElementById("cell32").style.backgroundColor = "#453f3f";}, 400);
+
+ if(trackBoard[0][1] && trackBoard[1][1] && trackBoard[2][1] == 10)
+ {
+  cpuWins();
+  return 1;
+ }
+ else if(trackBoard[0][1] && trackBoard[1][1] && trackBoard[2][1] == 1)
+ {
+    userWins();
+    return 1;
+  }
+}
+
+
+//Column 3 win
+// [][][X]
+// [][][X]
+// [][][X]
+else if(trackBoard[0][2] != "" && trackBoard[0][2] == trackBoard[1][2] && trackBoard[1][2] == trackBoard[2][2])
+{
+  setTimeout(function()  {document.getElementById("cell13").style.backgroundColor = "#453f3f";
+    document.getElementById("cell23").style.backgroundColor = "#453f3f";
+    document.getElementById("cell33").style.backgroundColor = "#453f3f";}, 400);
+
+  if(trackBoard[0][2] && trackBoard[1][2] && trackBoard[2][2] == 10)
+  {
+    cpuWins();
+    return 1;
+  }
+  else if(trackBoard[0][2] && trackBoard[1][2] && trackBoard[2][2] == 1)
+  {
+    userWins();
+    return 1;
+  }
+}
+//No winner (tie)
+else if(moves > 8)
+{
+  setTimeout(function() {document.getElementById("endgame3").style.visibility = "visible"; sound1.play();}, 600);
+  gameFinished = 1;
+  return 1;
+}
+else
+{
+  return 0;
+}
+}
+
+//Iterates through array game board so other player can select a square
+function cpuTurn(p)
+{
+  let cpuSelected = 0;
+
+  for(let i = 0; i < 3; i++)
+  {
+    for(let j = 0; j < 3; j++)
+    {
+      //Evaluate any wins
+      win = checkWin();
+      if(win == 1)
+      {
+        cpuSelected = 1;
+        break;
+      }
+      else
+      {
+        //Occupies next empty space available on game board
+        if(trackBoard[i][j] == "")
+        {
+          cpuChoice = "cell" + (i+1) + (j+1);
+          trackBoard[i][j] = 10;
+          moves++;
+          if(p ==1)
+          {
+            setTimeout(function() { document.getElementById(cpuChoice).innerHTML = "O";},300);
+          }
+          else if(p == 0)
+          {
+            setTimeout(function() { document.getElementById(cpuChoice).innerHTML = "<span style='color: #e0cf0b;'>X</span>";},300)
+          }
+          document.getElementById(cpuChoice).disabled=true;
+          win = checkWin();
+          cpuSelected = 1;
+          break;
+        }
+      }
+    }
+    if(cpuSelected ==1)
+    {
+      break;
+    }
+  }             
+}
+
+//Updates array game board
+function updateTrackBoard(currentCell, player)
+{
+  //Increments total moves made throughout game
+  moves++;
+  switch(currentCell)
+  {
+    case "cell11":
+    {
+      trackBoard[0][0] = 1;
+    }
+    break;
+    case "cell12":
+    {
+      trackBoard[0][1] = 1;
+    }
+    break;
+    case "cell13":
+    {
+      trackBoard[0][2] = 1;
+    }
+    break;
+    case "cell21":
+    {
+      trackBoard[1][0] = 1;
+    }
+    break;
+    case "cell22":
+    {
+      trackBoard[1][1] = 1;
+    }
+    break;
+    case "cell23":
+    {
+      trackBoard[1][2] = 1;
+    }
+    break;
+    case "cell31":
+    {
+      trackBoard[2][0] = 1;
+    }
+    break;
+    case "cell32":
+    {
+      trackBoard[2][1] = 1;
+    }
+    break;
+    case "cell33":
+    {
+      trackBoard[2][2] = 1;
+    }
+    break;
+  }
+
+  //CPU turn
+  cpuTurn(player);
+}
+
+
+//Writes X or O on user's Tic-Tac-Toe Board 
+function updateBoard(cell) 
+{
+  click.play();
+  if(gameFinished == 0 && !document.getElementById(cell.id).disabled)
+  {
+    if(playerType ==1) //Writes X for Player 1
+    {
+      document.getElementById(cell.id).innerHTML = "<span style='color: #e0cf0b;'>X</span>";
+    }
+    else if(playerType == 0) //Writes O for Player 2
+    {
+      document.getElementById(cell.id).innerHTML = "O";
+    }
+
+    //Updates array game board
+    updateTrackBoard(cell.id, playerType);
+  }
+  else if(gameFinished == 0 && document.getElementById(cell.id).disabled)
+  {
+    //Prevents user from selecting occupied square
+    alert("This square has already been taken");
+  }
+
+  document.getElementById(cell.id).disabled = true;
+
+}
+
+//Displays game board and initializes player type (1 or 2)
+function selectPlayer(val) 
+{
+
+  if(selected !=1) //If user has not selected a player yet
+  {
+    sound.play();
+    //User selects Player 1 (Detective X)
+    if(val == 'X')
+    {
+
+      document.getElementById("heading").innerHTML = "<span style='color: #e0cf0b;'>YOU ARE 'X'</span>";
+      document.getElementById("detective-1").style.visibility = "visible";
+      dialogue(1);
+      document.body.style.backgroundImage ="url('images/wallpaper1.png')";
+      document.body.style.backgroundSize = "cover";
+      playerType = 1;
+    }
+
+    //User selects Player 2 (The Investigat-O)
+    else if (val == 'O')
+    {
+      document.getElementById("heading").innerHTML = "<span style='color: #05ab18;'>YOU ARE 'O'</span>";
+      document.getElementById("detective-2").style.visibility = "visible";
+      dialogue(0);
+      document.body.style.backgroundImage ="url('images/wallpaper2.jpg')";
+      document.body.style.backgroundSize = "cover";
+      playerType = 0;
+    }
+    music.play();
+
+    //Display Tic-Tac-Toe Board 
+    document.getElementById("gameBoard").style.visibility="visible";
+  }
+
+  selected = 1;
+
+}
+
+//Writes player dialogue
+function dialogue(type)
+{
+  if(type ==0)
+  {
+   document.getElementById("detective-2").innerHTML = "The Investigat-O: Place an O on the board";
+      document.getElementById("detective-1").innerHTML = "<span style = 'color:red;'>Detective X: Consider this game a loss already!</span>";
+  }
+  else if(type == 1)
+  {
+     document.getElementById("detective-1").innerHTML = "Detective X: Place an X on the board";
+      document.getElementById("detective-2").innerHTML = "<span style = 'color:red;'>The Investigat-O: Let's see who solves this case first.</span>";
+  }
+}
+//Toggles visibility of game ending card
+function hide(card)
+{
+ document.getElementById(card.id).style.visibility = "hidden";
+}
+  </script> 
+</html>
