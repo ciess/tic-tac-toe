@@ -107,13 +107,13 @@ td:hover
 #playerO:hover
 {
   background-color: #756a85;
-  background-image:url("images/o.png");
+  background-image:url("o.png");
   transition-duration:300ms;
 }
 #playerX:hover
 {
   background-color:#a68587;
-  background-image:url("images/x.png");
+  background-image:url("x.png");
   transition-duration:300ms;
 }
 #playerX:hover, #playerO:hover
